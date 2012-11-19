@@ -46,11 +46,10 @@ function tui() {
 	// workaround for iOS 5 rotate bug
 	if(navigator.userAgent.match(/i(Phone|Pad).*5_[0-9]/))
 		window.onorientationchange = function() {
-			var c = tui.current;
 			var scr = window.pageYOffset;
-			c.style.display = 'none';
+			document.body.style.display = 'none';
 			setTimeout(function() {
-				c.style.display = 'block';
+				document.body.style.display = 'block';
 				scrollTo(0, scr);
 			},1);
 		}
