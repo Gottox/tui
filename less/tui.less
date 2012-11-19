@@ -3,119 +3,19 @@
 @asideWidth:250px;
 @headerHeight:40px;
 
+@import "tui.layout.less";
+@import "tui.input.less";
+
+
 #tui {
 	* {
 		-webkit-tap-highlight-color: rgba(0,0,0,0);
 	}
-	img[data-lazy-src] {
-		visibility:hidden;
+
+	.left {
+		float:left;
 	}
-	article {
-		display:none;
-		position:absolute;
-		left:0;
-		right:0;
-		top:0;
-	}
-	section > header ~ article {
-		margin-top:@headerHeight;
-	}
-
-	section {
-		header, article {
-			// Prevent flickering on iOS
-			-webkit-perspective: 1000;
-			-webkit-backface-visibility: hidden;
-
-			.transition-delay(0.05s);
-			.transition-duration(0.45s);
-			-webkit-transition-property:-webkit-transform;
-			-moz-transition-property:-moz-transform;
-			-ms-transition-property:-ms-transform;
-			-o-transition-property:-o-transform;
-			transition-property:transform;
-	
-		}
-		&.toLeft {
-			header, article {
-				* {
-					pointer-events:none;
-				}
-				position:fixed;
-				.transform(translateX(@asideWidth));
-			}
-		}
-		&.toRight {
-			header, article {
-				* {
-					pointer-events:none;
-				}
-				position:fixed;
-				.transform(translateX(@asideWidth * -1));
-			}
-		}
-	}
-
-	section.current article {
-		display:block;
-		z-index:2
-	}
-
-	aside {
-		// Prevent flickering on iOS
-		-webkit-perspective: 1000;
-		-webkit-backface-visibility: hidden;
-		z-index:-2;
-		position:absolute;
-		width:@asideWidth;
-		top:0;
-		bottom:0;
-		overflow:hidden;
-		&.right {
-			right:0;
-			clip:rect(auto @asideWidth auto @asideWidth);
-		}
-		&.left {
-			left:0;
-			clip:rect(auto 0 auto 0);
-		}
-
-		&.current {
-			min-height:100%;
-			bottom:auto;
-			clip:rect(auto @asideWidth + 200px auto -200px);
-			z-index:-1;
-		}
-
-		header {
-			z-index:0;
-			line-height:@headerHeight;
-			text-align:center;
-		}
-	}
-
-	section > header {
-		position:fixed;
-		left:0;
-		top:0;
-		//right:0;
-		width:100%;
-		line-height:@headerHeight;
-		z-index:3;
-
-		.left, .right {
-			text-decoration:none;
-			color:inherit;
-			min-width:@headerHeight;
-			text-align:center;
-		}
-		.left {
-			float:left;
-		}
-		.right {
-			float:right;
-		}
-		text-align:center;
-		font-size:24px;
+	.right {
+		float:right;
 	}
 }
