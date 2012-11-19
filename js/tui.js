@@ -41,6 +41,18 @@ function initImages() {
 	})();
 }
 
+function fixate(e,s) {
+	e.style.top = "-" + window.pageYOffset + "px";
+	e.style.position = 'fixed';
+	s && scrollTo(0,0)
+}
+function unfixate(e, s) {
+	var t = parseInt(e.style.top);
+	e.style.top = 0;
+	e.style.position = 'absolute';
+	s && scrollTo(0,-t);
+}
+
 function tui() {
 	tui.location = tui.location || location.href;
 	// workaround for iOS 5 rotate bug
@@ -72,15 +84,13 @@ function article() {
 }
 
 tui.closeAside = function() {
-	var t = parseInt(article().style.top);
 	tui.current.className = tui.current.className.replace(lst('to(Right|Left)'), " ");
-	article().style.top = 0;
-	tui.aside.style.top = -window.pageYOffset-t+"px";
-	scrollTo(0, -t);
+	unfixate(article(), 1);
+	fixate(tui.aside)
 	setTimeout( function() {
 		if(tui.aside) {
 			tui.aside.className = tui.aside.className.replace(lst('current'), " ");
-			tui.aside.style.top = 0;
+			unfixate(tui.aside)
 		}
 		delete tui.aside;
 	}, 500);
@@ -96,8 +106,7 @@ tui.openAside = function(e) {
 			})
 		}, 500);
 
-		article().style.top = "-" + window.pageYOffset + "px";
-		scrollTo(0,0);
+		fixate(article(), 1)
 		tui.current.className += e.className.match(lst("right")) ? ' toRight' : ' toLeft';
 		(tui.aside = e).className += ' current';
 }
