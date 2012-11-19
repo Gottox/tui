@@ -1,0 +1,8 @@
+{
+	"name": "lecture.io",
+	"dependencies": {
+		"damntouch": "git://github.com/Gottox/damntouch.git",
+		"font-awesome": "*",
+		"less-prefixer": "git://github.com/JoelSutherland/LESS-Prefixer.git"
+	}
+}
