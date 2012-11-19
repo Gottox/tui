@@ -17,13 +17,11 @@
 		right:0;
 		top:0;
 	}
-	header ~ article {
+	section > header ~ article {
 		margin-top:@headerHeight;
 	}
 
 	section {
-		z-index:1;
-		overflow-x:hidden;
 		header, article {
 			// Prevent flickering on iOS
 			-webkit-perspective: 1000;
@@ -60,6 +58,7 @@
 
 	section.current article {
 		display:block;
+		z-index:2
 	}
 
 	aside {
@@ -88,30 +87,27 @@
 			z-index:-1;
 		}
 
-		.title {
+		header {
+			z-index:0;
 			line-height:@headerHeight;
 			text-align:center;
 		}
 	}
 
-	header {
+	section > header {
 		position:fixed;
 		left:0;
 		top:0;
 		//right:0;
 		width:100%;
-		height:@headerHeight;
+		line-height:@headerHeight;
 		z-index:3;
 
-		label, a {
+		.left, .right {
 			text-decoration:none;
-			text-align:center;
 			color:inherit;
-			padding:3px;
-			width:35px;
-		}
-		*:active {
-			background: rgba(0, 0, 0, 0.1);
+			min-width:@headerHeight;
+			text-align:center;
 		}
 		.left {
 			float:left;
@@ -119,7 +115,7 @@
 		.right {
 			float:right;
 		}
-		font-size:28px;
 		text-align:center;
+		font-size:24px;
 	}
 }

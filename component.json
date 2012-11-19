@@ -1,5 +1,6 @@
 {
-	"name": "lecture.io",
+	"name": "tui",
+	"version": "0.0.1",
 	"dependencies": {
 		"damntouch": "git://github.com/Gottox/damntouch.git",
 		"font-awesome": "*",
