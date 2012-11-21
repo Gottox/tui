@@ -5,39 +5,56 @@
 	img[data-lazy-src] {
 		visibility:hidden;
 	}
-	article {
-		display:none;
-		position:absolute;
-		left:0;
-		right:0;
-		top:0;
-		bottom:0;
-		&.scroll {
-			bottom:auto;
-			min-height:100%;
-		}
-	}
 	section > header ~ article {
 		padding-top:@headerHeight;
 	}
 
 	section {
+		display:none;
+		&.current {
+			display:block;
+			& > header {
+				z-index:2;
+			}
+			& > article {
+				z-index:1;
+			}
+		}
 		header, article {
 			// Prevent flickering on iOS
 			-webkit-perspective: 1000;
 			-webkit-backface-visibility: hidden;
 
-			.transition-delay(0.05s);
-			.transition-duration(0.45s);
-			.transition-timing-function(cubic-bezier(0.390, 0.575, 0.565, 1.000));
 			-webkit-transition-property:-webkit-transform;
 			-moz-transition-property:-moz-transform;
 			-ms-transition-property:-ms-transform;
 			-o-transition-property:-o-transform;
 			transition-property:transform;
-	
 		}
-		&.toLeft {
+	
+		article {
+			position:fixed;
+			left:0;
+			right:0;
+			top:0;
+			bottom:0;
+		}
+
+		article.scroll {
+			position:absolute;
+			bottom:auto;
+			min-height:100%;
+		}
+
+		&.animate {
+			header{
+				z-index:5;
+			}
+			article {
+				z-index:4;
+			}
+		}
+		&.asideAtLeft {
 			header, article {
 				* {
 					pointer-events:none;
@@ -46,7 +63,7 @@
 				.transform(translateX(@asideWidth));
 			}
 		}
-		&.toRight {
+		&.asideAtRight {
 			header, article {
 				* {
 					pointer-events:none;
@@ -55,11 +72,24 @@
 				.transform(translateX(@asideWidth * -1));
 			}
 		}
-	}
-
-	section.current article {
-		display:block;
-		z-index:2
+		&.leftOut {
+			header, article {
+				* {
+					pointer-events:none;
+				}
+				position:fixed;
+				.transform(translateX(-100%));
+			}
+		}
+		&.rightOut {
+			header, article {
+				* {
+					pointer-events:none;
+				}
+				position:fixed;
+				.transform(translateX(100%));
+			}
+		}
 	}
 
 	aside {
@@ -89,9 +119,12 @@
 		}
 
 		header {
-			z-index:0;
 			line-height:@headerHeight;
 			text-align:center;
+		}
+		a.list {
+			display:block;
+			padding:15px 10px;
 		}
 	}
 
@@ -102,7 +135,6 @@
 		//right:0;
 		width:100%;
 		line-height:@headerHeight;
-		z-index:3;
 
 		.left, .right {
 			text-decoration:none;

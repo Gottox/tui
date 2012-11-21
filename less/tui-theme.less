@@ -7,6 +7,11 @@
 		//border-bottom:2px ridge #4698D3;
 		
 		color:white;
+		.right, .left {
+			&:active, &.selected {
+				background-color:rgba(0,0,0,0.1);
+			}
+		}
 		label.right, a.right {
 			box-shadow: -1px 0 0 rgba(255, 255, 255, 0.2), inset 1px 0 0 rgba(0, 0, 0, 0.2);
 			//border-left:2px ridge #4698D3;
@@ -20,7 +25,7 @@
 		}
 	}
 
-	article {
+	section > article {
 		background:white;
 	}
 	aside {
@@ -29,6 +34,14 @@
 		header {
 			background:#101010;
 			font-size:20px;
+		}
+		a.list {
+			color:white;
+			text-decoration:none;
+			border-bottom:1px solid rgba(255,255,255,0.1);
+		}
+		a.list.selected {
+			background-color: #237fd7;
 		}
 	}
 

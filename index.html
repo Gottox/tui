@@ -7,7 +7,7 @@
 		<link rel="stylesheet" type="text/css" media="screen" href="css/tui-theme.css" />
 		<link rel="stylesheet" type="text/css" media="screen" href="components/font-awesome/css/font-awesome.css" />
 		<script type="text/javascript" src="components/damntouch/damntouch-vanilla.js"></script>
-		<script type="text/javascript" src="js/tui.js"></script>
+		<script type="text/javascript" src="js/tui2.js"></script>
 		<meta name="HandheldFriendly" content="True">
 		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no, width=device-width" />
 		<meta name="apple-mobile-web-app-capable" content="yes">
@@ -15,24 +15,39 @@
 		<meta http-equiv="cleartype" content="on">
 	</head>
 	<body onload='tui()' id="tui">
-		<section class="current">
+		<section id='section1' class="current">
 			<header>
+				<a href="#section2" class="icon-caret-right right" data-animation='right'></a>
 				<a href="#slides" class="icon-film left"></a>
 				<a href="#tools" class="icon-briefcase right"></a>
-				Title
+				Section1
 			</header>
-			<article class='scroll'>
-				hello header!
+			<article>
+				Section1
 				<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 				<img data-lazy-src="http://www.gravatar.com/avatar/1d1dfc2fdcb8bd7c3ce5d0159829354b.png?size=200" />
 			</article>
 		</section>
-		<aside class="left" id="slides" data-tui="swipe">
-			<header>left</header>
-			foobar
+		<section id='section2'>
+			<header>
+				<a href="#section1" class="icon-caret-left left" data-animation="left"></a>
+				<a href="#slides" class="icon-film left"></a>
+				<a href="#tools" class="icon-briefcase right"></a>
+				Section2
+			</header>
+			<article>
+				Section2
 				<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+				<img data-lazy-src="http://www.gravatar.com/avatar/1d1dfc2fdcb8bd7c3ce5d0159829354b.png?size=200" />
+			</article>
+		</section>
+
+		<aside class="left" id="slides">
+			<header>left</header>
+			<a href="#section1" class='list' data-animation="right">Section 1</a>
+			<a href="#section2" class='list' data-animation="right">Section 2</a>
 		</aside>
-		<aside class="right" id="tools" data-tui="swipe">
+		<aside class="right" id="tools">
 			<header>right</header>
 			foobar
 				<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>

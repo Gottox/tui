@@ -1,30 +1,37 @@
-var TRUE = {1:1, 'true':1}
+var ANIMATE_DURATION = 500;
+var CSS_PROP = /^(animation|backgroundSize|borderRadius|boxShadow|boxSizing|columns|opacity|transform|textShadow|transition)/;
+var CSS_PREFIX = {webkit:1,Ms:1,Moz:1,O:1}; 
 
-var xhr = {};
+var CACHE = {};
 
-function initLinks() {
-	for(var i = 0; i < document.links.length; i++) {
-		var l = document.links[i];
-		var hash = l.href.replace(tui.location.replace(/#.*/,''),"");
-		if(hash[0] !== '#' && !TRUE[l.getAttribute('data-xhr')]) continue;
-		click(l, (function(hash) { return function() {
-			tui.open(hash);
-			return true;
-		}})(hash));
+var TRUE = {'1':1, 'true':1};
+
+function tui() {
+	initHash();
+	initSection();
+	initLinks();
+	initImages();
+}
+
+function initHash() {
+	window.onhashchange = function() {
+		if(location.hash)
+			tui.open(location.hash);
+		else
+			tui.open(tui.default);
 	}
 }
 
-function lst(c) {
-	return new RegExp("((^| +)"+c+")+($| +)", 'g');
-}
-
-function initSections() {
-	var sections = document.getElementsByTagName('section');
-	for(var i = 0; i < sections.length; i++) {
-		var s = sections[i];
-		if(!tui.current || s.className.match(lst('current')))
-			(tui.current = s).className += ' current';
+function initSection() {
+	var s = document.getElementsByTagName('section');
+	tui.default = s[0];
+	for(var i = 0; i < s.length; i++) {
+		if(tui.hasCls(s[i], 'current')) {
+			tui.rmCls(s[i], 'current')
+			tui.default = s[i];
+		}
 	}
+	tui.open(location.hash || tui.default);
 }
 
 function initImages() {
@@ -41,105 +48,156 @@ function initImages() {
 	})();
 }
 
-function fixate(e,s) {
-	e.style.top = "-" + window.pageYOffset + "px";
-	e.style.position = 'fixed';
-	s && scrollTo(0,0)
-}
-function unfixate(e, s) {
-	var t = parseInt(e.style.top);
-	e.style.top = 0;
-	e.style.position = 'absolute';
-	s && scrollTo(0,-t);
+
+function cleanHref(h) {
+		return h.replace(location.href.replace(/#.*/,''),"");
 }
 
-function tui() {
-	tui.location = tui.location || location.href;
-	// workaround for iOS 5 rotate bug
-	if(navigator.userAgent.match(/i(Phone|Pad).*5_[0-9]/))
-		window.onorientationchange = function() {
-			var scr = window.pageYOffset;
-			document.body.style.display = 'none';
-			setTimeout(function() {
-				document.body.style.display = 'block';
-				scrollTo(0, scr);
-			},1);
-		}
-	initSections();
-	initLinks();
-	initImages();
-}
-
-function click(e, fn) {
-	e.onclick = fn;
-	return e;
-}
-
-function article() {
-	var c = tui.current.childNodes;
-	for(var i = 0; i < c.length; i++) {
-		if(c[i].nodeName.toLowerCase() === 'article')
-			return c[i];
+function initLinks() {
+	var l = document.links;
+	for(var i = 0; i < l.length; i++) {
+		var href = cleanHref(l[i].href)
+		if(href[0] !== '#' && !TRUE[l[i].getAttribute('data-xhr')])
+			continue;
+		if(!l[i].onclick) tui.click(l[i], function() {
+			tui.open(cleanHref(this.href), this.getAttribute('data-animation'))
+			this.blur();
+			return false;
+		})
 	}
 }
 
-tui.closeAside = function() {
-	tui.current.className = tui.current.className.replace(lst('to(Right|Left)'), " ");
-	unfixate(article(), 1);
-	fixate(tui.aside)
-	setTimeout( function() {
-		if(tui.aside) {
-			tui.aside.className = tui.aside.className.replace(lst('current'), " ");
-			unfixate(tui.aside)
+tui.click = function(e, fn) {
+	setTimeout(function() {
+		e.onclick = fn;
+	},0);
+}
+
+tui.addCls = function(e, c) {
+	if(e) e.className += " " + (c.join ? c.join(' ') : c.toString());
+}
+
+tui.rmCls = function(e, c) {
+	if(!e) return;
+	if(typeof c === 'string') c = [c];
+	for(var i = 0; i < c.length; i++) {
+		e.className = e.className
+		.replace(new RegExp("((^| +)"+c[i]+")+($| +)", 'g'), "$2")
+		.replace(/ *$/, "").replace(/(^| ) +/, "$1");
+	}
+}
+
+tui.hasCls = function(e, c) {
+	return !!e.className
+		.match(new RegExp("(^| +)"+c+"($| +)"))
+}
+
+tui.animate = function() {
+	var a = arguments;
+	a = a[0].join ? a : [ a ];
+	var fn = arguments[arguments.length - 1];
+	setTimeout(function() {
+		for(var i = 0; i < a.length && typeof a[i][0] === 'function'; i++) {
+			a[i][0](a[i][1], a[i][2]);
+			tui.addCls(a[i][1], 'animate');
 		}
-		delete tui.aside;
-	}, 500);
-	return tui;
-}
-
-tui.openAside = function(e) {
 		setTimeout(function() {
-			click(tui.current, function() {
-				click(tui.current, null);
-				tui.closeAside();
-				return false;
-			})
-		}, 500);
-
-		fixate(article(), 1)
-		tui.current.className += e.className.match(lst("right")) ? ' toRight' : ' toLeft';
-		(tui.aside = e).className += ' current';
+			for(var i = 0; i < a.length; i++) {
+				tui.rmCls(a[i][1], 'animate');
+			}
+			typeof fn === 'function' && fn();
+		}, ANIMATE_DURATION);
+	}, 0);
 }
 
-tui.open = function(e) {
-	if(e[0] === '#')
-		e = document.getElementById(e.substr(1));
-	else if(typeof e === 'string') {
-		var r = new XMLHttpRequest();
-		r.open("GET", e, false);
-		r.onreadystatechange = function () {
-			if (r.readyState != 4 || r.status != 200) return;
-			var t = document.createElement('div');
-			t.innerHTML = r.responseText.replace(/(<\/?)body( |>)/g, "$1foobar$2");
-			t = t.getElementsByTagName('foobar');
-			var d = document.createElement('span');
-			d.innerHTML = t.innerHTML;
-			xhr[e] = d;
-			document.body.appendChild(d);
-		};
-		r.send("");
-		return false;
+tui.css = function(e, s) {
+	for(var k in s) {
+		e.style[k] = s[k];
+		if(!CSS_PROP.test(k))
+			continue;
+		for(var p in CSS_PREFIX) {
+			e.style[p + k[0].toUpperCase() + k.substr(1)] = s[k];
+		}
+	}
+}
+
+tui.open = function(u, a) {
+	var e;
+	if(typeof u === 'string') {
+		if(u[0] !== '#')
+			return false;
+		e = document.getElementById(u.substr(1));
+	}
+	else {
+		e = u;
 	}
 	switch(e.nodeName.toLowerCase()) {
-	case 'aside':
-		tui.openAside(e);
-		break;
 	case 'section':
-		tui.closeAside().current.className = tui.current.className.replace(lst('current'), " ");
-		(tui.current = e).className += ' current';
-		break;
-	default:
-		location.href = '#' + e.id;
+		var dirIn = ''
+		  , old = tui.current;
+		switch(a) {
+		case 'left':
+			dirIn = 'leftOut';
+			break;
+		case 'right':
+			dirIn = 'rightOut';
+			break;
+		}
+		if(tui.current === e || tui.hasCls(e, 'animate'))
+			return false;
+		tui.current = e;
+		location.hash = e === tui.default ? "" : e.id;
+		if(window.pageYOffset != 0)
+			scrollTo(0,0);
+		tui.addCls(e, [dirIn, 'current']);
+		tui.animate(
+			[tui.rmCls, e, dirIn],
+			function() {
+				tui.asideClose();
+				tui.rmCls(old, 'current|(left|right)Out|asideAt(Right|Left)');
+			});
+	break;
+	case 'aside':
+		tui.asideClose()
+		tui.addCls(e, 'current');
+		tui.animate(tui.addCls, tui.current, tui.hasCls(e, 'right') ? 'asideAtRight' : 'asideAtLeft');
+		tui.aside = e;
+		tui.click(tui.current, function() {
+			tui.asideClose()
+		});
+	break;
 	}
-	return tui;
+	var l = document.links;
+	for(var i = 0; i < l.length; i++) {
+		var href = cleanHref(l[i].href);
+		if(href === '#' + e.id)
+			tui.addCls(l[i], 'selected');
+		else {
+			var t = document.getElementById(href.substr(1));
+			if(t && t.nodeName === e.nodeName)
+				tui.rmCls(l[i], 'selected');
+		}
+	}
+}
+
+tui.asideClose = function() {
+	var a = tui.aside;
+	if(!a) return false;
+	var s = document.getElementsByTagName('section');
+	for(var i = 0; i < s.length; i++) {
+		tui.click(s[i], null);
+	}
+	tui.animate(tui.rmCls, tui.current, 'asideAt(Right|Left)', function() {
+		tui.rmCls(a, 'current');
+		if(a == tui.aside)
+			delete tui.aside;
+	});
+	var l = document.links;
+	for(var i = 0; i < l.length; i++) {
+		var href = cleanHref(l[i].href);
+		var t = document.getElementById(href.substr(1));
+		if(t && t.nodeName.toLowerCase() === 'aside')
+			tui.rmCls(l[i], 'selected');
+	}
+	return false;
 }
