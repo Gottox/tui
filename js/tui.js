@@ -180,7 +180,7 @@ tui.open = function(u, a) {
 	}
 }
 
-tui.asideClose = function() {
+tui.asideClose = function(cb) {
 	var a = tui.aside;
 	if(!a) return false;
 	var s = document.getElementsByTagName('section');
@@ -191,6 +191,7 @@ tui.asideClose = function() {
 		tui.rmCls(a, 'current');
 		if(a == tui.aside)
 			delete tui.aside;
+		cb && cb();
 	});
 	var l = document.links;
 	for(var i = 0; i < l.length; i++) {

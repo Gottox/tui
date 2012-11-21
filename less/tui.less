@@ -10,6 +10,10 @@
 #tui {
 	* {
 		-webkit-tap-highlight-color: rgba(0,0,0,0);
+
+		// Prevent flickering on iOS
+		//-webkit-perspective: 1000;
+		-webkit-backface-visibility: hidden;
 	}
 
 	.left {

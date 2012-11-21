@@ -21,10 +21,6 @@
 			}
 		}
 		header, article {
-			// Prevent flickering on iOS
-			-webkit-perspective: 1000;
-			-webkit-backface-visibility: hidden;
-
 			-webkit-transition-property:-webkit-transform;
 			-moz-transition-property:-moz-transform;
 			-ms-transition-property:-ms-transform;
@@ -93,9 +89,6 @@
 	}
 
 	aside {
-		// Prevent flickering on iOS
-		-webkit-perspective: 1000;
-		-webkit-backface-visibility: hidden;
 		z-index:-2;
 		position:absolute;
 		width:@asideWidth;
