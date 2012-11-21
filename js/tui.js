@@ -182,7 +182,10 @@ tui.open = function(u, a) {
 
 tui.asideClose = function(cb) {
 	var a = tui.aside;
-	if(!a) return false;
+	if(!a) {
+		cb && cb();
+		return false;
+	}
 	var s = document.getElementsByTagName('section');
 	for(var i = 0; i < s.length; i++) {
 		tui.click(s[i], null);
