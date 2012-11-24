@@ -131,6 +131,8 @@ tui.open = function(u, a) {
 	else {
 		e = u;
 	}
+	if(!e)
+		return;
 	switch(e.nodeName.toLowerCase()) {
 	case 'section':
 		var dirIn = ''
