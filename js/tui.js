@@ -69,7 +69,13 @@ function initLinks() {
 
 tui.click = function(e, fn) {
 	setTimeout(function() {
-		e.onclick = fn;
+		var ev;
+		if(!(ev = e.getAttribute('data-trigger')))
+			ev = 'click';
+		e.onclick = function() {return false};
+		ev = ev.split(/\W+/);
+		for(var i = 0; i < ev.length; i++)
+			e['on'+ev[i]] = fn;
 	},0);
 }
 
