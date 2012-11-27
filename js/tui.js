@@ -118,11 +118,50 @@ tui.animate = function() {
 
 tui.css = function(e, s) {
 	for(var k in s) {
-		e.style[k] = s[k];
+		if(k in e.style) {
+			e.style[k] = s[k];
+			continue;
+		}
 		if(!CSS_PROP.test(k))
 			continue;
+		var found = false;
 		for(var p in CSS_PREFIX) {
-			e.style[p + k[0].toUpperCase() + k.substr(1)] = s[k];
+			var pk = p + k[0].toUpperCase() + k.substr(1);
+			if(pk in e.style) {
+				e.style[p + k[0].toUpperCase() + k.substr(1)] = s[k];
+				found = true;
+				break;
+			}
+		}
+		if(!found)
+			transform(e, s[k]);
+	}
+}
+
+function transform(e, t) {
+	for(var p in CSS_PREFIX) {
+		if(p + 'Transform' in e.style || 'transform' in e.style)
+			return;
+	}
+
+	if(t == "")
+		return e.style.marginLeft = e.style.marginTop = 0;
+	t = t.replace(/^\s+|\s+$/, "").split(/\)\s+/);
+	for(var i = 0; i < t.length; i++) {
+		var p = t[i].split(/\(\s*/, 2);
+		var n = p[0];
+		var v = p[1].split(/\s*,\s*/);
+		switch(n) {
+		case 'translate':
+			e.style.marginLeft = (v[0]);
+			e.style.marginTop = (v[1]);
+			break;
+		case 'translateX':
+			e.style.marginLeft = (v[0]);
+			break;
+		case 'translateY':
+			e.style.marginTop = (v[0]);
+			break;
 		}
 	}
 }
