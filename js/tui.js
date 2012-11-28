@@ -219,7 +219,7 @@ tui.open = function(u, a) {
 		var href = cleanHref(l[i].href);
 		if(href === '#' + e.id)
 			tui.addCls(l[i], 'selected');
-		else {
+		else if(href[0] === '#'){
 			var t = document.getElementById(href.substr(1));
 			if(t && t.nodeName === e.nodeName)
 				tui.rmCls(l[i], 'selected');
