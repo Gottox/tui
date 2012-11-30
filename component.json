@@ -2,7 +2,7 @@
 	"name": "tui",
 	"version": "0.0.1",
 	"dependencies": {
-		"font-awesome": "*",
+		"font-awesome": "git://github.com/FortAwesome/Font-Awesome.git",
 		"less-prefixer": "git://github.com/JoelSutherland/LESS-Prefixer.git"
 	}
 }
