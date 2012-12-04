@@ -80,7 +80,10 @@ tui.click = function(e, fn) {
 }
 
 tui.addCls = function(e, c) {
-	if(e) e.className += " " + (c.join ? c.join(' ') : c.toString());
+	if(!e) return;
+	if(!e.push) e = [ e ];
+	for(var i = 0; i < e.length; i++)
+		e[i].className += " " + (c.join ? c.join(' ') : c.toString());
 }
 
 tui.rmCls = function(e, c) {
@@ -120,27 +123,17 @@ tui.animate = function() {
 tui.css = function(e, s) {
 	if(!e.push) e = [ e ]
 	for(var k in s) {
-		if(k in e.style) {
-			e.style[k] = s[k];
-			continue;
-		}
-		if(!CSS_PROP.test(k))
-			continue;
-		var found = false;
+		var ok = k;
 		for(var p in CSS_PREFIX) {
-			var pk = p + k[0].toUpperCase() + k.substr(1);
-			if(pk in e[0].style) {
-				found = true;
-				for(var i = 0; i < e.length; i++) {
-					e[i].style[p + k[0].toUpperCase() + k.substr(1)] = s[k];
-				}
+			if(k in e[0].style)
 				break;
-			}
+			k = p + ok[0].toUpperCase() + ok.substr(1);
 		}
-		if(!found) {
-			for(var i = 0; i < e.length; i++) {
-				transform(e[i], s[k]);
-			}
+		for(var i = 0; i < e.length; i++) {
+			if(k in e[0].style)
+				e[i].style[k] = s[ok];
+			else
+				transform(e[i], s[ok]);
 		}
 	}
 }
