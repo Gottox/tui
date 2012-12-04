@@ -88,11 +88,14 @@ tui.addCls = function(e, c) {
 
 tui.rmCls = function(e, c) {
 	if(!e) return;
+	if(!e.push) e = [e];
 	if(typeof c === 'string') c = [c];
 	for(var i = 0; i < c.length; i++) {
-		e.className = e.className
-		.replace(new RegExp("((^| +)"+c[i]+")+($| +)", 'g'), "$2")
-		.replace(/ *$/, "").replace(/(^| ) +/, "$1");
+		for(var j = 0; j < e.length; j++) {
+			e[j].className = e[j].className
+			.replace(new RegExp("((^| +)"+c[i]+")+($| +)", 'g'), "$2")
+			.replace(/ *$/, "").replace(/(^| ) +/, "$1");
+		}
 	}
 }
 
