@@ -94,13 +94,14 @@ tui.rmCls = function(e, c) {
 }
 
 tui.hasCls = function(e, c) {
+	if(e.push) e = e[0];
 	return !!e.className
 		.match(new RegExp("(^| +)"+c+"($| +)"))
 }
 
 tui.animate = function() {
 	var a = arguments;
-	a = a[0].join ? a : [ a ];
+	a = a[0].push ? a : [ a ];
 	var fn = arguments[arguments.length - 1];
 	setTimeout(function() {
 		for(var i = 0; i < a.length && typeof a[i][0] === 'function'; i++) {
@@ -117,6 +118,7 @@ tui.animate = function() {
 }
 
 tui.css = function(e, s) {
+	if(!e.push) e = [ e ]
 	for(var k in s) {
 		if(k in e.style) {
 			e.style[k] = s[k];
@@ -127,14 +129,19 @@ tui.css = function(e, s) {
 		var found = false;
 		for(var p in CSS_PREFIX) {
 			var pk = p + k[0].toUpperCase() + k.substr(1);
-			if(pk in e.style) {
-				e.style[p + k[0].toUpperCase() + k.substr(1)] = s[k];
+			if(pk in e[0].style) {
 				found = true;
+				for(var i = 0; i < e.length; i++) {
+					e[i].style[p + k[0].toUpperCase() + k.substr(1)] = s[k];
+				}
 				break;
 			}
 		}
-		if(!found)
-			transform(e, s[k]);
+		if(!found) {
+			for(var i = 0; i < e.length; i++) {
+				transform(e[i], s[k]);
+			}
+		}
 	}
 }
 
