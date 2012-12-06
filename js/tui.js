@@ -68,7 +68,7 @@ function initLinks() {
 }
 
 tui.click = function(e, fn) {
-	setTimeout(function() {
+	setTimeout(function() { tui.each(e, function(e) {
 		var ev;
 		if(!(ev = e.getAttribute('data-trigger')))
 			ev = 'click';
@@ -76,7 +76,7 @@ tui.click = function(e, fn) {
 		ev = ev.split(/\W+/);
 		for(var i = 0; i < ev.length; i++)
 			e['on'+ev[i]] = fn;
-	},0);
+	}); },0);
 }
 
 tui.addCls = function(e, c) {
@@ -89,7 +89,7 @@ tui.rmCls = function(e, c) {
 	if(tui.isArr(c)) c = c.join('|');
 	tui.each(e, function(e) {
 		e.className = e.className
-			.replace(new RegExp("((^| +)"+ c +")+($| +)", 'g'), "$2")
+			.replace(new RegExp("(^| +)"+ c +"($| +)", 'g'), "$1")
 			.replace(/ *$/, "").replace(/(^| ) +/, "$1");
 	});
 }
@@ -102,8 +102,11 @@ tui.isObj = function(obj) {
 	return !key || hasOwnProp.call( obj, key );
 }
 
-tui.isArr = function(obj) {
-	return obj.constructor.toString().indexOf("Array") != -1
+tui.isArr = function(obj, strict) {
+	var str = obj.constructor.toString();
+	if(!strict && (str.match(/NodeList|HTMLCollection/)))
+		return true;
+	return str.indexOf("Array") != -1;
 }
 
 tui.hasCls = function(e, c) {
@@ -136,8 +139,8 @@ tui.each = function(obj, fn) {
 }
 
 tui.animate = function() {
-	var a = arguments;
-	if(!tui.isArr(a)) [ a ];
+	var a = Array.prototype.slice.call(arguments);
+	if(!tui.isArr(a[0])) a = [ a ];
 	var fn = arguments[arguments.length - 1];
 	setTimeout(function() {
 		for(var i = 0; i < a.length && typeof a[i][0] === 'function'; i++) {
@@ -154,15 +157,15 @@ tui.animate = function() {
 }
 
 tui.css = function(e, s) {
-	tui.each(e, function() {
+	tui.each(e, function(e) {
 		for(var k in s) {
 			var ok = k;
 			for(var p in CSS_PREFIX) {
-				if(k in e[0].style)
+				if(k in e.style)
 					break;
 				k = p + ok[0].toUpperCase() + ok.substr(1);
 			}
-			if(k in e[0].style)
+			if(k in e.style)
 				e.style[k] = s[ok];
 			else
 				transform(e, s[ok]);
