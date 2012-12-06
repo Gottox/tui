@@ -80,34 +80,64 @@ tui.click = function(e, fn) {
 }
 
 tui.addCls = function(e, c) {
-	if(!e) return;
-	if(!e.push) e = [ e ];
-	for(var i = 0; i < e.length; i++)
-		e[i].className += " " + (c.join ? c.join(' ') : c.toString());
+	tui.each(e, function(e) {
+		e.className += " " + (c.join ? c.join(' ') : c.toString());
+	})
 }
 
 tui.rmCls = function(e, c) {
-	if(!e) return;
-	if(!e.push) e = [e];
-	if(typeof c === 'string') c = [c];
-	for(var i = 0; i < c.length; i++) {
-		for(var j = 0; j < e.length; j++) {
-			e[j].className = e[j].className
-			.replace(new RegExp("((^| +)"+c[i]+")+($| +)", 'g'), "$2")
+	if(tui.isArr(c)) c = c.join('|');
+	tui.each(e, function(e) {
+		e.className = e.className
+			.replace(new RegExp("((^| +)"+ c +")+($| +)", 'g'), "$2")
 			.replace(/ *$/, "").replace(/(^| ) +/, "$1");
-		}
-	}
+	});
+}
+
+tui.isObj = function(obj) {
+	if ( toString.call(obj) !== "[object Object]" )
+		return false;
+	var key;
+	for ( key in obj ) {}
+	return !key || hasOwnProp.call( obj, key );
+}
+
+tui.isArr = function(obj) {
+	return obj.constructor.toString().indexOf("Array") != -1
 }
 
 tui.hasCls = function(e, c) {
-	if(e.push) e = e[0];
+	if(tui.isArr(e)) e = e[0];
 	return !!e.className
 		.match(new RegExp("(^| +)"+c+"($| +)"))
 }
 
+tui.each = function(obj, fn) {
+	if(!obj)
+		return;
+	var call = function(item, key) {
+		var r = fn.apply(0, arguments);
+		return r === undefined ? true : !!r;
+	}
+	if(tui.isArr(obj)) {
+		for(var i = 0; i < obj.length; i++) {
+			if(!call(obj[i], i)) break;
+		}
+	}
+	else if(tui.isObj(obj)) {
+		for(var i in obj) {
+			if(obj.hasOwnProperty(i))
+				if(!call(obj[i], i)) break;
+		}
+	}
+	else {
+		call(obj, null);
+	}
+}
+
 tui.animate = function() {
 	var a = arguments;
-	a = a[0].push ? a : [ a ];
+	if(!tui.isArr(a)) [ a ];
 	var fn = arguments[arguments.length - 1];
 	setTimeout(function() {
 		for(var i = 0; i < a.length && typeof a[i][0] === 'function'; i++) {
@@ -124,21 +154,21 @@ tui.animate = function() {
 }
 
 tui.css = function(e, s) {
-	if(!e.push) e = [ e ]
-	for(var k in s) {
-		var ok = k;
-		for(var p in CSS_PREFIX) {
+	tui.each(e, function() {
+		for(var k in s) {
+			var ok = k;
+			for(var p in CSS_PREFIX) {
+				if(k in e[0].style)
+					break;
+				k = p + ok[0].toUpperCase() + ok.substr(1);
+			}
 			if(k in e[0].style)
-				break;
-			k = p + ok[0].toUpperCase() + ok.substr(1);
-		}
-		for(var i = 0; i < e.length; i++) {
-			if(k in e[0].style)
-				e[i].style[k] = s[ok];
+				e.style[k] = s[ok];
 			else
-				transform(e[i], s[ok]);
+				transform(e, s[ok]);
 		}
-	}
+	});
+	if(!e.push) e = [ e ]
 }
 
 function transform(e, t) {
@@ -236,22 +266,20 @@ tui.asideClose = function(cb) {
 		cb && cb();
 		return false;
 	}
-	var s = document.getElementsByTagName('section');
-	for(var i = 0; i < s.length; i++) {
-		tui.click(s[i], null);
-	}
+	tui.each(document.getElementsByTagName('section'), function(s) {
+		tui.click(s, null);
+	});
 	tui.animate(tui.rmCls, tui.current, 'asideAt(Right|Left)', function() {
 		tui.rmCls(a, 'current');
 		if(a == tui.aside)
 			delete tui.aside;
 		cb && cb();
 	});
-	var l = document.links;
-	for(var i = 0; i < l.length; i++) {
-		var href = cleanHref(l[i].href);
+	tui.each(document.links, function(l) {
+		var href = cleanHref(l.href);
 		var t = document.getElementById(href.substr(1));
 		if(t && t.nodeName.toLowerCase() === 'aside')
-			tui.rmCls(l[i], 'selected');
-	}
+			tui.rmCls(l, 'selected');
+	})
 	return false;
 }
